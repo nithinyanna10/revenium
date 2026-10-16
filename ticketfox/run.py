@@ -38,7 +38,7 @@ def main():
     if not names:
         raise SystemExit(f"No customer matches {args.customers!r}; have {list(customers)}")
 
-    spend = Spend(modes["spend_limit_usd"], modes["pricing_usd_per_1m_tokens"], config.spent_so_far())
+    spend = Spend(modes["spend_limit_usd"], modes["pricing_usd_per_1m_tokens"], config.spent_so_far(args.run_tag))
     run_id = uuid.uuid4().hex[:6]
     out = config.ROOT / "results" / f"{args.mode}-{dt.datetime.now():%Y%m%d-%H%M%S}.jsonl"
     out.parent.mkdir(exist_ok=True)

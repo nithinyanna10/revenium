@@ -1,6 +1,6 @@
 # The whole baseline / optimized / incident diff lives in this file.
-# Counts every call/eval row that carries a --run-tag (Phase 3 onward), across all result files.
-spend_limit_usd: 12.0
+# Per run tag: counts call/eval rows carrying the current --run-tag, across all result files.
+spend_limit_usd: 6.0
 
 # OpenAI list prices (USD per 1M tokens). Checked against Revenium's per-call costs: input/output match, and
 # prompt-cached input tokens bill at cached_input (verified for both models).
@@ -21,7 +21,8 @@ modes:
   optimized:
     agent_version: "2.0.0"
     models: {summarizer: gpt-4o-mini, triage: gpt-4o-mini, responder: gpt-4o, qa: gpt-4o-mini}
-    responder_context: summary_plus_latest   # summarizer-agent brief + newest message only
+    responder_context: routed                # short thread: brief + newest message; long: structured summary + last 2 raw messages
+    long_thread_tokens: 2000                 # raw thread above this many tokens takes the long route
     triage_context: first_plus_latest        # first message + newest customer message
     responder_kb_articles: 2                 # top-N articles by keyword match
     qa_threshold: 0.75

@@ -6,9 +6,8 @@ dependencies = [
     "python-dotenv>=1.2.4",
     "pyyaml>=6.0.3",
     "revenium-python-sdk[anthropic,openai]>=0.10.1",
+    "tiktoken>=0.14.0",
 ]
 
 [dependency-groups]
-dev = [
-    "tiktoken>=0.14.0",
-]
+dev = []

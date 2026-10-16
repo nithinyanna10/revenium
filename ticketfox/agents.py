@@ -4,7 +4,10 @@ import math
 import re
 from collections import Counter
 
+import tiktoken
+
 CATEGORIES = "shipping, billing, returns, account, appointments, product, other"
+_enc = tiktoken.get_encoding("o200k_base")
 CRITERIA = ("accuracy", "completeness", "tone", "actionability")
 
 
@@ -41,10 +44,20 @@ def kb_query(ticket, summary=None):
     return " ".join([ticket["subject"], ticket["subject"], ticket["latest"], summary or ""])
 
 
-def responder_context(ticket, kb, cfg, summary=None):
+def route(ticket, cfg):
+    """Tiered routing (optimized mode): 'long' if the raw thread exceeds long_thread_tokens, else 'short'."""
+    if cfg["responder_context"] != "routed":
+        return None
+    return "long" if len(_enc.encode(thread_text(ticket["messages"]))) > cfg["long_thread_tokens"] else "short"
+
+
+def responder_context(ticket, kb, cfg, summary=None, route=None):
     """Apply the mode's context rules: how much thread, how much knowledge base."""
     if cfg["responder_context"] == "full_thread":
         thread = thread_text(ticket["messages"])
+    elif route == "long":
+        last2 = "\n\n=====\n\n".join(m["text"] for m in ticket["messages"][-2:])
+        thread = f"STRUCTURED SUMMARY OF THE THREAD (extracted facts)\n{summary}\n\nLAST TWO MESSAGES (raw)\n{last2}"
     else:
         thread = f"SUMMARY OF THE THREAD SO FAR\n{summary}\n\nLATEST CUSTOMER MESSAGE\n{ticket['latest']}"
     k = cfg["responder_kb_articles"]
@@ -66,6 +79,25 @@ def summary_messages(ticket, customer):
             "into a factual brief of at most 150 words. Ignore quoted repeats, signatures and disclaimers. "
             "Include: who the customer is, order/shipment/invoice/account identifiers, amounts and dates, "
             "what was already tried or promised, what is still unresolved, and the customer's mood.")},
+        {"role": "user", "content": f"Subject: {ticket['subject']}\n\nTHREAD\n{thread_text(ticket['messages'])}"},
+    ]
+
+
+STRUCTURED_FIELDS = ("people", "commitments_and_deadlines", "threats", "ids", "unresolved_asks", "timeframes")
+
+
+def structured_summary_messages(ticket, customer):
+    return [
+        {"role": "system", "content": (
+            f"You are summarizer-agent for the support desk of {customer['name']}. Extract the email thread into "
+            "fixed fields, ignoring quoted repeats, signatures and disclaimers. Reply with JSON only, one list of "
+            "short strings per field, exhaustive rather than brief; use [] when a field has nothing:\n"
+            '{"people": all contacts and people mentioned with their role, '
+            '"commitments_and_deadlines": what either side promised and by when, '
+            '"threats": chargebacks, cancellation, escalation or legal threats, '
+            '"ids": every order, shipment, case and invoice id with amounts and dates, '
+            '"unresolved_asks": every question or request still open, '
+            '"timeframes": every time frame mentioned, quoted or expected}')},
         {"role": "user", "content": f"Subject: {ticket['subject']}\n\nTHREAD\n{thread_text(ticket['messages'])}"},
     ]
 

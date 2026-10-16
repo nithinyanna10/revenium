@@ -44,7 +44,7 @@ class Call(NamedTuple):
     cached: int = 0  # prompt tokens served from OpenAI's prompt cache (billed at the cached rate)
 
 
-def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type, step, parent=None, retry=0, run_tag=None):
+def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type, step, parent=None, retry=0, run_tag=None, route=None):
     user = next(u for u in customer["users"] if u["id"] == ticket["user"])
     trace_id = f"{ticket['id']}-{run_id}"  # one trace per ticket per run
     md = {
@@ -63,6 +63,8 @@ def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type,
     }
     if parent:
         md["parent_transaction_id"] = parent
+    if route:
+        md["trace_type"] = f"ticket-{route}"  # the SDK has no free-form field; trace_type is a filterable Logs column
     if run_tag:
         md["trace_name"] = run_tag  # a Data > Logs column: filter/group on it to isolate one run
     return md

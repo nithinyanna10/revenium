@@ -713,10 +713,6 @@ dependencies = [
     { name = "python-dotenv" },
     { name = "pyyaml" },
     { name = "revenium-python-sdk", extra = ["anthropic", "openai"] },
-]
-
-[package.dev-dependencies]
-dev = [
     { name = "tiktoken" },
 ]
 
@@ -725,10 +721,11 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.4" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "revenium-python-sdk", extras = ["anthropic", "openai"], specifier = ">=0.10.1" },
+    { name = "tiktoken", specifier = ">=0.14.0" },
 ]
 
 [package.metadata.requires-dev]
-dev = [{ name = "tiktoken", specifier = ">=0.14.0" }]
+dev = []
 
 [[package]]
 name = "revenium-python-sdk"

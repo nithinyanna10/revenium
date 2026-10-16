@@ -51,11 +51,12 @@ def main():
     modes = config.load_modes()
     tickets = {t["id"]: t for t in config.load_tickets()}
     kb_text = "\n\n".join(text for _, text in config.load_kb())
-    spend = Spend(modes["spend_limit_usd"], modes["pricing_usd_per_1m_tokens"], config.spent_so_far())
     run_id = uuid.uuid4().hex[:6]
     out = ROOT / "results" / f"eval-{dt.datetime.now():%Y%m%d-%H%M%S}.jsonl"
     src = [r for f in args.files for r in map(json.loads, f.read_text().splitlines())
            if r["kind"] == "ticket" and r.get("final_response")]
+    spend = Spend(modes["spend_limit_usd"], modes["pricing_usd_per_1m_tokens"],
+                  config.spent_so_far(src[0].get("run_tag")) if src else 0.0)  # one tag per eval invocation
     n_calls = 0
     try:
         with out.open("a") as f:

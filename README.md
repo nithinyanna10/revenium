@@ -30,3 +30,12 @@ uv run python -m ticketfox.run --mode optimized --customers acme,cobalt --ticket
 - `uv run python scripts/summarize_results.py --tag bulk-v1` prints the customer x mode table, quality delta, margin table and sample traces.
 - Spend guard ($12) counts every call/eval row carrying a run tag, across all result files.
 
+## Phase 3.5: tiered routing + real costs
+- Optimized mode routes by raw-thread size (`long_thread_tokens: 2000`): short threads keep the free-form summary + latest message;
+  long threads get a structured JSON summary (summarizer task_type `thread-summary-structured`) + the last 2 raw messages + top-2 KB.
+  `route` is stored on every row and sent as `trace_type` = `ticket-short` / `ticket-long` (the SDK has no free-form field).
+- Spend guard ($6) is per `--run-tag`.
+- Real costs: Revenium Data > Logs > Exports > Transaction Log CSV (no trace-name column; rows join to ours on transaction id).
+  `results/revenium-costs-bulk.csv` is that export filtered to the bulk-v1/bulk-v2 pipeline calls (eval calls removed).
+  `uv run python scripts/summarize_results.py --export results/revenium-costs-bulk.csv`
+

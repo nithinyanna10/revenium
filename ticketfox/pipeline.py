@@ -7,6 +7,7 @@ from ticketfox.metering import build_metadata, chat
 
 class TicketRun:
     def __init__(self, ticket, customer, mode, cfg, kb, spend, run_id, rows, run_tag=None):
+        self.route = agents.route(ticket, cfg)  # 'short' | 'long' | None (baseline/incident)
         self.ticket, self.customer, self.mode, self.cfg, self.kb = ticket, customer, mode, cfg, kb
         self.spend, self.run_id, self.run_tag = spend, run_id, run_tag
         self.parent = None  # previous call's transaction id -> parent_transaction_id of the next
@@ -14,12 +15,12 @@ class TicketRun:
 
     def call(self, role, agent, task_type, step, messages, *, retry=0, json_mode=False, max_tokens=300):
         md = build_metadata(self.ticket, self.customer, self.run_id, self.cfg["agent_version"],
-                            agent=agent, task_type=task_type, step=step, parent=self.parent, retry=retry, run_tag=self.run_tag)
+                            agent=agent, task_type=task_type, step=step, parent=self.parent, retry=retry, run_tag=self.run_tag, route=self.route)
         model = self.cfg["models"][role]
         c = chat(self.spend, model, messages, md, max_tokens=max_tokens, json_mode=json_mode)
         self.rows.append({
             "kind": "call", "ts": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-            "run_id": self.run_id, "run_tag": self.run_tag, "mode": self.mode, "agent_version": self.cfg["agent_version"],
+            "run_id": self.run_id, "run_tag": self.run_tag, "route": self.route, "mode": self.mode, "agent_version": self.cfg["agent_version"],
             "customer": self.customer["name"], "ticket": self.ticket["id"], "trace_id": md["trace_id"],
             "agent": agent, "task_type": task_type, "step": step, "model": model, "retry": retry,
             "tokens_in": c.tokens_in, "tokens_out": c.tokens_out, "cached_tokens": c.cached, "est_cost": round(c.cost, 6),
@@ -35,10 +36,13 @@ def run_ticket(ticket, customer, mode, cfg, kb, spend, run_id, rows, run_tag=Non
         agents.triage_messages(ticket, customer, cfg), json_mode=True, max_tokens=120))
 
     summary = None
-    if cfg["responder_context"] == "summary_plus_latest":
+    if t.route == "long":
+        summary = t.call("summarizer", "summarizer-agent", "thread-summary-structured", "thread-summary-structured",
+                         agents.structured_summary_messages(ticket, customer), json_mode=True, max_tokens=700)
+    elif t.route == "short":
         summary = t.call("summarizer", "summarizer-agent", "thread-summary", "thread-summary",
                          agents.summary_messages(ticket, customer), max_tokens=300)
-    thread, kb_text = agents.responder_context(ticket, kb, cfg, summary)
+    thread, kb_text = agents.responder_context(ticket, kb, cfg, summary, t.route)
 
     attempt, feedback = 0, None
     while True:
@@ -64,7 +68,7 @@ def run_ticket(ticket, customer, mode, cfg, kb, spend, run_id, rows, run_tag=Non
             break
         attempt += 1
 
-    result = {"kind": "ticket", "run_id": run_id, "run_tag": run_tag, "mode": mode, "customer": customer["name"],
+    result = {"kind": "ticket", "run_id": run_id, "run_tag": run_tag, "route": t.route, "mode": mode, "customer": customer["name"],
               "ticket": ticket["id"], "calls": len(t.rows),
               "tokens_in": sum(r["tokens_in"] for r in t.rows), "tokens_out": sum(r["tokens_out"] for r in t.rows),
               "retries": attempt, "est_cost": round(sum(r["est_cost"] for r in t.rows), 6),

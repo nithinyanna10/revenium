@@ -3,3 +3,4 @@
 __pycache__/
 *.pyc
 results/*.jsonl
+results/revenium-export-raw.csv

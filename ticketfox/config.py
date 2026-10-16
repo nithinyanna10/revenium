@@ -27,7 +27,7 @@ def load_kb():
     return [(p.stem, p.read_text()) for p in sorted((ROOT / "fixtures" / "kb").glob("*.md"))]
 
 
-def spent_so_far():
-    """Estimated $ already spent by tagged runs and evals (rows with a run_tag), summed over results/*.jsonl."""
+def spent_so_far(tag):
+    """Estimated $ already spent under one run tag (pipeline calls and their evals), summed over results/*.jsonl."""
     rows = (json.loads(ln) for f in (ROOT / "results").glob("*.jsonl") for ln in f.read_text().splitlines())
-    return sum(r["est_cost"] for r in rows if r.get("run_tag") and r["kind"] in ("call", "eval"))
+    return sum(r["est_cost"] for r in rows if r.get("run_tag") == tag and r["kind"] in ("call", "eval"))
