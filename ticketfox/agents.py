@@ -70,13 +70,20 @@ def summary_messages(ticket, customer):
     ]
 
 
-def triage_messages(ticket, customer):
+def triage_input(ticket, cfg):
+    msgs = ticket["messages"]
+    if cfg["triage_context"] == "first_plus_latest" and len(msgs) > 1:
+        return f"FIRST MESSAGE\n{msgs[0]['text']}\n\nLATEST CUSTOMER MESSAGE\n{ticket['latest']}"
+    return thread_text(msgs)
+
+
+def triage_messages(ticket, customer, cfg):
     return [
         {"role": "system", "content": (
             f"You are triage-agent on the support desk of {customer['name']}. Classify the ticket. "
             f'Reply with JSON only: {{"category": one of [{CATEGORIES}], '
             '"urgency": "low"|"medium"|"high", "summary": "max 20 words"}')},
-        {"role": "user", "content": f"Subject: {ticket['subject']}\n\n{thread_text(ticket['messages'])}"},
+        {"role": "user", "content": f"Subject: {ticket['subject']}\n\n{triage_input(ticket, cfg)}"},
     ]
 
 
@@ -94,13 +101,15 @@ def draft_messages(ticket, customer, triage, thread, kb_text, feedback=None):
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
 
 
-def review_messages(ticket, draft):
-    """Always judges against the FULL original thread, in every mode."""
+def review_messages(ticket, draft, kb_text):
+    """Always judges against the FULL original thread, in every mode, plus the KB the responder saw."""
     return [
         {"role": "system", "content": (
             "You are qa-reviewer-agent. Judge a drafted support reply against the full email thread. "
             "Score each criterion from 0.0 to 1.0 and be strict:\n"
-            "- accuracy: every fact, identifier, date and amount matches the thread; no invented policy\n"
+            "- accuracy: every fact, identifier, date and amount matches the thread; policy statements match the "
+            "knowledge base (a correct policy answer is accurate even if the customer assumed otherwise); "
+            "no invented policy\n"
             "- completeness: every open customer question is answered; earlier contacts are acknowledged "
             "and nothing already tried is repeated\n"
             "- tone: warm, calm, professional, owns the problem, no blame, no padding\n"
@@ -108,5 +117,6 @@ def review_messages(ticket, draft):
             'Reply with JSON only: {"accuracy": n, "completeness": n, "tone": n, "actionability": n, '
             '"feedback": "max 40 words on the biggest fix"}')},
         {"role": "user", "content": (
+            f"KNOWLEDGE BASE (the policies the responder was allowed to use)\n{kb_text}\n\n"
             f"Subject: {ticket['subject']}\n\nTHREAD\n{thread_text(ticket['messages'])}\n\nDRAFT REPLY\n{draft}")},
     ]

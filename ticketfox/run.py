@@ -14,6 +14,7 @@ def main():
     ap.add_argument("--mode", choices=["baseline", "optimized", "incident"], required=True)
     ap.add_argument("--customers", default="all", help="'all' or comma-separated names, e.g. acme,cobalt")
     ap.add_argument("--tickets", type=int, default=1, help="tickets per customer (fixture order)")
+    ap.add_argument("--run-tag", help="sent as trace_name so one run can be filtered in Revenium Data > Logs")
     ap.add_argument("--debug", action="store_true", help="REVENIUM_LOG_LEVEL=DEBUG")
     args = ap.parse_args()
 
@@ -37,7 +38,7 @@ def main():
     if not names:
         raise SystemExit(f"No customer matches {args.customers!r}; have {list(customers)}")
 
-    spend = Spend(modes["spend_limit_usd"], modes["pricing_usd_per_1m_tokens"])
+    spend = Spend(modes["spend_limit_usd"], modes["pricing_usd_per_1m_tokens"], config.spent_so_far())
     run_id = uuid.uuid4().hex[:6]
     out = config.ROOT / "results" / f"{args.mode}-{dt.datetime.now():%Y%m%d-%H%M%S}.jsonl"
     out.parent.mkdir(exist_ok=True)
@@ -48,7 +49,7 @@ def main():
                 for ticket in [t for t in tickets if t["customer"] == name][: args.tickets]:
                     rows = []
                     try:
-                        r = run_ticket(ticket, customers[name], args.mode, cfg, kb, spend, run_id, rows)
+                        r = run_ticket(ticket, customers[name], args.mode, cfg, kb, spend, run_id, rows, args.run_tag)
                         results.append(r)
                         rows.append(r)
                     finally:  # a spend-guard abort mid-ticket still keeps that ticket's call rows

@@ -20,16 +20,16 @@ class SpendLimitExceeded(RuntimeError):
 class Spend:
     """Running cost estimate from token counts x pricing table. Aborts the run past the limit."""
 
-    def __init__(self, limit, pricing):
-        self.limit, self.pricing, self.total = limit, pricing, 0.0
+    def __init__(self, limit, pricing, start=0.0):
+        self.limit, self.pricing, self.total = limit, pricing, start
 
     def check(self):
         if self.total >= self.limit:
             raise SpendLimitExceeded(f"estimated spend ${self.total:.4f} reached limit ${self.limit:.2f}")
 
-    def add(self, model, tokens_in, tokens_out):
+    def add(self, model, tokens_in, tokens_out, cached=0):
         p = self.pricing[model]
-        cost = (tokens_in * p["input"] + tokens_out * p["output"]) / 1_000_000
+        cost = ((tokens_in - cached) * p["input"] + cached * p["cached_input"] + tokens_out * p["output"]) / 1_000_000
         self.total += cost
         self.check()
         return cost
@@ -41,9 +41,10 @@ class Call(NamedTuple):
     tokens_in: int
     tokens_out: int
     cost: float
+    cached: int = 0  # prompt tokens served from OpenAI's prompt cache (billed at the cached rate)
 
 
-def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type, step, parent=None, retry=0):
+def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type, step, parent=None, retry=0, run_tag=None):
     user = next(u for u in customer["users"] if u["id"] == ticket["user"])
     trace_id = f"{ticket['id']}-{run_id}"  # one trace per ticket per run
     md = {
@@ -62,19 +63,24 @@ def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type,
     }
     if parent:
         md["parent_transaction_id"] = parent
+    if run_tag:
+        md["trace_name"] = run_tag  # a Data > Logs column: filter/group on it to isolate one run
     return md
 
 
 _client = None
 
 
-def chat(spend, model, messages, metadata, *, max_tokens, json_mode=False):
+def chat(spend, model, messages, metadata, *, max_tokens, json_mode=False, temperature=None):
     global _client
     _client = _client or openai.OpenAI()
     spend.check()
     extra = {"response_format": {"type": "json_object"}} if json_mode else {}
+    if temperature is not None:
+        extra["temperature"] = temperature
     r = _client.chat.completions.create(
         model=model, messages=messages, max_tokens=max_tokens, usage_metadata=metadata, **extra
     )
     tin, tout = r.usage.prompt_tokens, r.usage.completion_tokens
-    return Call(r.choices[0].message.content or "", r.id, tin, tout, spend.add(model, tin, tout))
+    cached = getattr(r.usage.prompt_tokens_details, "cached_tokens", 0) or 0
+    return Call(r.choices[0].message.content or "", r.id, tin, tout, spend.add(model, tin, tout, cached), cached)

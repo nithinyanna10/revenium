@@ -1,17 +1,20 @@
 # The whole baseline / optimized / incident diff lives in this file.
-spend_limit_usd: 5.0
+# Counts every call/eval row that carries a --run-tag (Phase 3 onward), across all result files.
+spend_limit_usd: 12.0
 
-# Assumption: OpenAI public list prices (USD per 1M tokens). Verify before quoting.
+# OpenAI list prices (USD per 1M tokens). Checked against Revenium's per-call costs: input/output match, and
+# prompt-cached input tokens bill at cached_input (verified for both models).
 pricing_usd_per_1m_tokens:
-  gpt-4o:      {input: 2.50, output: 10.00}
-  gpt-4o-mini: {input: 0.15, output: 0.60}
+  gpt-4o:      {input: 2.50, cached_input: 1.25, output: 10.00}
+  gpt-4o-mini: {input: 0.15, cached_input: 0.075, output: 0.60}
 
 modes:
   baseline: &baseline
     agent_version: "1.0.0"
     models: {triage: gpt-4o, responder: gpt-4o, qa: gpt-4o}
     responder_context: full_thread       # raw email thread, quotes and signatures included
-    responder_kb_articles: all           # entire knowledge-base blob on every responder call
+    triage_context: full_thread
+    responder_kb_articles: all           # entire knowledge-base blob on every responder call (and the reviewer sees the same)
     qa_threshold: 0.9
     qa_max_retries: 4
 
@@ -19,6 +22,7 @@ modes:
     agent_version: "2.0.0"
     models: {summarizer: gpt-4o-mini, triage: gpt-4o-mini, responder: gpt-4o, qa: gpt-4o-mini}
     responder_context: summary_plus_latest   # summarizer-agent brief + newest message only
+    triage_context: first_plus_latest        # first message + newest customer message
     responder_kb_articles: 2                 # top-N articles by keyword match
     qa_threshold: 0.75
     qa_max_retries: 1
