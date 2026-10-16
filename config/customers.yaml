@@ -1,0 +1,32 @@
+# Fictional customers of Ticketfox (a B2B SaaS selling an AI support assistant).
+# monthly_price_usd = what the customer pays Ticketfox. tickets_per_month = ASSUMED volume
+# (tune once real per-ticket costs are measured).
+customers:
+  - name: Acme Logistics
+    plan: Starter
+    monthly_price_usd: 299
+    tickets_per_month: 1500
+    ticket_style: short, simple (1-2 messages)
+    users:
+      - {id: acme-u1, email: dana.whitfield@example.com}
+      - {id: acme-u2, email: raj.kapoor@example.com}
+
+  - name: Bluepeak Health
+    plan: Growth
+    monthly_price_usd: 799
+    tickets_per_month: 2500
+    ticket_style: medium (3-4 messages)
+    users:
+      - {id: bp-u1, email: lena.ortiz@example.com}
+      - {id: bp-u2, email: marcus.hale@example.com}
+      - {id: bp-u3, email: priya.nair@example.com}
+
+  - name: Cobalt Retail
+    plan: Growth
+    monthly_price_usd: 799
+    tickets_per_month: 6000
+    ticket_style: long, messy multi-message threads (6-12 messages)
+    users:
+      - {id: cr-u1, email: tom.brandt@example.com}
+      - {id: cr-u2, email: yuki.tanaka@example.com}
+      - {id: cr-u3, email: olivia.reyes@example.com}

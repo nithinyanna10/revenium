@@ -1,0 +1,81 @@
+"""All Revenium metadata building and every OpenAI call live here.
+
+Importing revenium_middleware.openai auto-instruments the OpenAI client; the only thing a call
+needs to be metered is the usage_metadata kwarg built by build_metadata().
+"""
+from typing import NamedTuple
+
+import openai
+import revenium_middleware  # noqa: F401
+import revenium_middleware.openai  # noqa: F401  (auto-instruments on import)
+
+PRODUCT = "Ticketfox AI Assistant"
+ENVIRONMENT = "demo"
+AGENT_VERSION = "1.0.0"
+
+
+class SpendLimitExceeded(RuntimeError):
+    pass
+
+
+class Spend:
+    """Running cost estimate from token counts x pricing table. Aborts the run past the limit."""
+
+    def __init__(self, limit, pricing):
+        self.limit, self.pricing, self.total = limit, pricing, 0.0
+
+    def check(self):
+        if self.total >= self.limit:
+            raise SpendLimitExceeded(f"estimated spend ${self.total:.4f} reached limit ${self.limit:.2f}")
+
+    def add(self, model, tokens_in, tokens_out):
+        p = self.pricing[model]
+        cost = (tokens_in * p["input"] + tokens_out * p["output"]) / 1_000_000
+        self.total += cost
+        self.check()
+        return cost
+
+
+class Call(NamedTuple):
+    text: str
+    id: str  # provider response id; Revenium records it as the transaction id
+    tokens_in: int
+    tokens_out: int
+    cost: float
+
+
+def build_metadata(ticket, customer, run_id, *, agent, task_type, step, parent=None, retry=0):
+    user = next(u for u in customer["users"] if u["id"] == ticket["user"])
+    trace_id = f"{ticket['id']}-{run_id}"  # one trace per ticket per run
+    md = {
+        "organizationName": customer["name"],
+        "productName": PRODUCT,
+        "subscriber": {"id": user["id"], "email": user["email"]},
+        "agent": agent,
+        "task_type": task_type,
+        "trace_id": trace_id,
+        "ticket_id": ticket["id"],
+        "agentic_job_id": f"job-{trace_id}",
+        "transaction_name": step,
+        "environment": ENVIRONMENT,
+        "agent_version": AGENT_VERSION,
+        "retry_number": retry,
+    }
+    if parent:
+        md["parent_transaction_id"] = parent
+    return md
+
+
+_client = None
+
+
+def chat(spend, model, messages, metadata, *, max_tokens, json_mode=False):
+    global _client
+    _client = _client or openai.OpenAI()
+    spend.check()
+    extra = {"response_format": {"type": "json_object"}} if json_mode else {}
+    r = _client.chat.completions.create(
+        model=model, messages=messages, max_tokens=max_tokens, usage_metadata=metadata, **extra
+    )
+    tin, tout = r.usage.prompt_tokens, r.usage.completion_tokens
+    return Call(r.choices[0].message.content or "", r.id, tin, tout, spend.add(model, tin, tout))

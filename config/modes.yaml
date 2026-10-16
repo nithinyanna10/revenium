@@ -1,0 +1,22 @@
+# The whole baseline-vs-optimized diff lives in this file.
+spend_limit_usd: 3.0
+
+# Assumption: OpenAI public list prices (USD per 1M tokens). Verify before quoting.
+pricing_usd_per_1m_tokens:
+  gpt-4o:      {input: 2.50, output: 10.00}
+  gpt-4o-mini: {input: 0.15, output: 0.60}
+
+modes:
+  baseline:
+    models: {triage: gpt-4o, responder: gpt-4o, qa: gpt-4o}
+    responder_thread_messages: all   # full ticket thread on every responder call
+    responder_kb_articles: all       # entire knowledge-base blob on every responder call
+    qa_threshold: 0.9
+    qa_max_retries: 4
+
+  optimized:
+    models: {triage: gpt-4o-mini, responder: gpt-4o, qa: gpt-4o-mini}
+    responder_thread_messages: 2     # last N messages only
+    responder_kb_articles: 2         # top-N articles by keyword match
+    qa_threshold: 0.75
+    qa_max_retries: 1
