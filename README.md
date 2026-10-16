@@ -39,3 +39,9 @@ uv run python -m ticketfox.run --mode optimized --customers acme,cobalt --ticket
   `results/revenium-costs-bulk.csv` is that export filtered to the bulk-v1/bulk-v2 pipeline calls (eval calls removed).
   `uv run python scripts/summarize_results.py --export results/revenium-costs-bulk.csv`
 
+## Phase 3.6: risk-based gate, locked numbers
+- `optimized_v3` (config/modes.yaml) = optimized + `long_route_gate` (gpt-4o reviewer, 0.85, 2 retries, feedback fed back to the responder) on the long route only.
+  Run: `uv run python -m ticketfox.run --mode optimized_v3 --customers cobalt --tickets 10 --run-tag bulk-v3`.
+- `scripts/filter_export.py` strips a raw Revenium export down to our pipeline calls (no eval rows).
+- `results/FINAL_NUMBERS.md` is generated: `uv run python scripts/summarize_results.py --export results/revenium-costs-bulk.csv --final results/FINAL_NUMBERS.md`
+

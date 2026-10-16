@@ -1,6 +1,6 @@
 # The whole baseline / optimized / incident diff lives in this file.
 # Per run tag: counts call/eval rows carrying the current --run-tag, across all result files.
-spend_limit_usd: 6.0
+spend_limit_usd: 3.0
 
 # OpenAI list prices (USD per 1M tokens). Checked against Revenium's per-call costs: input/output match, and
 # prompt-cached input tokens bill at cached_input (verified for both models).
@@ -18,7 +18,7 @@ modes:
     qa_threshold: 0.9
     qa_max_retries: 4
 
-  optimized:
+  optimized: &optimized
     agent_version: "2.0.0"
     models: {summarizer: gpt-4o-mini, triage: gpt-4o-mini, responder: gpt-4o, qa: gpt-4o-mini}
     responder_context: routed                # short thread: brief + newest message; long: structured summary + last 2 raw messages
@@ -34,3 +34,10 @@ modes:
     agent_version: "1.1.0"
     qa_threshold: 0.95
     qa_max_retries: 6
+
+  # optimized (v2) + a risk-based gate on the long route only: stronger reviewer, higher bar, more retries.
+  # The reviewer's feedback goes back to the responder on retry (as in baseline). Short route is unchanged.
+  optimized_v3:
+    <<: *optimized
+    agent_version: "2.1.0"
+    long_route_gate: {qa_model: gpt-4o, qa_threshold: 0.85, qa_max_retries: 2}

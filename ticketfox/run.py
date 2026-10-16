@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["baseline", "optimized", "incident"], required=True)
+    ap.add_argument("--mode", required=True, help="a key under modes: in config/modes.yaml (baseline, optimized, optimized_v3, incident)")
     ap.add_argument("--customers", default="all", help="'all' or comma-separated names, e.g. acme,cobalt")
     ap.add_argument("--tickets", type=int, default=1, help="tickets per customer (fixture order)")
     ap.add_argument("--run-tag", help="sent as trace_name so one run can be filtered in Revenium Data > Logs")
@@ -31,6 +31,8 @@ def main():
     from ticketfox.pipeline import run_ticket
 
     modes = config.load_modes()
+    if args.mode not in modes["modes"]:
+        raise SystemExit(f"Unknown mode {args.mode!r}; have {list(modes['modes'])}")
     cfg = modes["modes"][args.mode]
     customers, tickets, kb = config.load_customers(), config.load_tickets(), config.load_kb()
     wanted = [s.strip().lower() for s in args.customers.split(",")]
