@@ -1,0 +1,55 @@
+# Hand-written email personas and signatures. Used by scripts/build_fixtures.py.
+# quote_depth = how many earlier replies each email quotes (nested), as real mail clients do.
+styles:
+  Acme Logistics:  {quote_depth: 0}
+  Bluepeak Health: {quote_depth: 1}
+  Cobalt Retail:   {quote_depth: 1}
+
+support:   # display name used on "support" messages, and its signature
+  Acme Logistics:
+    from: Acme Logistics Support <support@acmelogistics.example>
+    sig: ""
+  Bluepeak Health:
+    from: Bluepeak Patient Services <portal@bluepeakhealth.example>
+    sig: |
+      Bluepeak Patient Services | (555) 010-4400
+      This message may contain confidential health information. If you received it in error, please delete it and notify us.
+  Cobalt Retail:
+    from: Cobalt Customer Care <care@cobaltretail.example>
+    sig: |
+      Jordan Mills | Customer Care Specialist
+      Cobalt Retail Inc. | 400 Market Street, Suite 12, Portland, OR 97204
+      Support hours: Mon-Fri 8am-8pm PT | care@cobaltretail.example
+
+      This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the sender immediately and delete it from your system. Any views or opinions expressed are solely those of the author and do not necessarily represent those of Cobalt Retail Inc. Cobalt Retail Inc. accepts no liability for any damage caused by any virus transmitted by this email. Order status information is provided for convenience and may not reflect real-time carrier data. Nothing in this message constitutes a binding offer unless confirmed in writing by an authorised representative.
+
+users:
+  acme-u1: {name: Dana Whitfield, sig: ""}
+  acme-u2: {name: Raj Kapoor, sig: ""}
+  bp-u1:   {name: Lena Ortiz, sig: "Lena Ortiz\nSent from my iPhone"}
+  bp-u2:   {name: Marcus Hale, sig: "Marcus Hale"}
+  bp-u3:   {name: Priya Nair, sig: "Priya Nair\n(555) 013-0177"}
+  cr-u1:
+    name: Tom Brandt
+    sig: |
+      Tom Brandt
+      Senior Procurement Analyst | Harlan & Pike Consulting LLP
+      Direct: +1 (503) 555-0148 | Mobile: +1 (503) 555-0192 | www.harlanpike.example
+
+      CONFIDENTIALITY NOTICE: This e-mail message, including any attachments, is for the sole use of the intended recipient(s) and may contain confidential and privileged information. Any unauthorized review, use, disclosure or distribution is prohibited. If you are not the intended recipient, please contact the sender by reply e-mail and destroy all copies of the original message. Harlan & Pike Consulting LLP is a limited liability partnership registered in Oregon. Please consider the environment before printing this e-mail.
+  cr-u2:
+    name: Yuki Tanaka
+    sig: |
+      Yuki Tanaka | Product Designer
+      Nimbus Studio GmbH, Registered office: Kreuzbergstrasse 14, 10965 Berlin
+      Managing Directors: A. Vogel, M. Lindqvist | Commercial Register HRB 204118 B
+
+      Disclaimer: The information contained in this communication is intended solely for the use of the individual or entity to whom it is addressed and others authorized to receive it. It may contain confidential or legally privileged information. If you are not the intended recipient you are hereby notified that any disclosure, copying, distribution or taking any action in reliance on the contents of this information is strictly prohibited and may be unlawful. Nimbus Studio GmbH does not accept liability for any errors or omissions in the contents of this message which arise as a result of e-mail transmission.
+  cr-u3:
+    name: Olivia Reyes
+    sig: |
+      Olivia Reyes
+      Operations Lead, Fernhill Events Co.
+      (971) 555-0166
+
+      Sent from my iPhone. Please excuse typos. This message is intended only for the named recipient and may be privileged; if received in error please delete it.

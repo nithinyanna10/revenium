@@ -1,5 +1,5 @@
-# The whole baseline-vs-optimized diff lives in this file.
-spend_limit_usd: 3.0
+# The whole baseline / optimized / incident diff lives in this file.
+spend_limit_usd: 5.0
 
 # Assumption: OpenAI public list prices (USD per 1M tokens). Verify before quoting.
 pricing_usd_per_1m_tokens:
@@ -7,16 +7,25 @@ pricing_usd_per_1m_tokens:
   gpt-4o-mini: {input: 0.15, output: 0.60}
 
 modes:
-  baseline:
+  baseline: &baseline
+    agent_version: "1.0.0"
     models: {triage: gpt-4o, responder: gpt-4o, qa: gpt-4o}
-    responder_thread_messages: all   # full ticket thread on every responder call
-    responder_kb_articles: all       # entire knowledge-base blob on every responder call
+    responder_context: full_thread       # raw email thread, quotes and signatures included
+    responder_kb_articles: all           # entire knowledge-base blob on every responder call
     qa_threshold: 0.9
     qa_max_retries: 4
 
   optimized:
-    models: {triage: gpt-4o-mini, responder: gpt-4o, qa: gpt-4o-mini}
-    responder_thread_messages: 2     # last N messages only
-    responder_kb_articles: 2         # top-N articles by keyword match
+    agent_version: "2.0.0"
+    models: {summarizer: gpt-4o-mini, triage: gpt-4o-mini, responder: gpt-4o, qa: gpt-4o-mini}
+    responder_context: summary_plus_latest   # summarizer-agent brief + newest message only
+    responder_kb_articles: 2                 # top-N articles by keyword match
     qa_threshold: 0.75
     qa_max_retries: 1
+
+  # Baseline plus a bad config deploy: stricter QA, many more retries.
+  incident:
+    <<: *baseline
+    agent_version: "1.1.0"
+    qa_threshold: 0.95
+    qa_max_retries: 6

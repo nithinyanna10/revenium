@@ -1,0 +1,683 @@
+# Hand-written ticket content. `log` = text the sender pasted; `forward` = a forwarded email.
+# scripts/build_fixtures.py renders these into fixtures/tickets.json (headers, quoting, signatures).
+# All facts the agent needs (order/shipment/invoice details) are in the ticket: no lookups exist.
+
+# ---------------------------------------------------------------- Acme Logistics (short)
+- id: ACM-001
+  customer: Acme Logistics
+  user: acme-u1
+  subject: Pallet for PO 44821 not arrived
+  start: "2026-10-14 09:00"
+  messages:
+    - from: customer
+      text: "Our pallet for PO 44821 (tracking NF-771203, 1 pallet, 620 lb, Reno to Boise) was due Monday Oct 12. The last scan was Oct 9 08:14 'Arrived Salt Lake City hub' and nothing since. Where is it, and what happens next?"
+
+- id: ACM-002
+  customer: Acme Logistics
+  user: acme-u2
+  subject: Need copy of invoice INV-20931
+  start: "2026-10-08 09:00"
+  messages:
+    - from: customer
+      text: "Accounting lost invoice INV-20931 (September freight, $1,842.60, issued Oct 1). Please resend it to ap@acmelogistics.example."
+
+- id: ACM-003
+  customer: Acme Logistics
+  user: acme-u1
+  subject: Change drop-off address for SH-7712
+  start: "2026-10-12 10:00"
+  messages:
+    - from: customer
+      text: "Shipment SH-7712 is booked for delivery Oct 14 and the portal status is 'Awaiting dispatch'. We moved docks. Please deliver to 18 Harbor Way, Dock 4, Tacoma WA 98421 instead. On-site contact is Dana, 555-0134."
+
+- id: ACM-004
+  customer: Acme Logistics
+  user: acme-u2
+  subject: Two cartons crushed on arrival
+  start: "2026-10-13 16:40"
+  messages:
+    - from: customer
+      text: "Shipment SH-8002 was delivered today (Oct 13). Cartons 4 and 5 of 6 are crushed and the ceramic tile samples inside are broken. I wrote 'Received with damage' on the delivery receipt and have photos. Value is about $480. What do we do next?"
+
+- id: ACM-005
+  customer: Acme Logistics
+  user: acme-u1
+  subject: Move tomorrow's pickup to afternoon
+  start: "2026-10-13 07:00"
+  messages:
+    - from: customer
+      text: "Pickup PU-3391 is booked for tomorrow Oct 14, 9:00-13:00 window, at our Tacoma dock. Can you move it to any time after 1pm? It is 7am today (Oct 13). This is the first change we have made to it."
+
+- id: ACM-006
+  customer: Acme Logistics
+  user: acme-u2
+  subject: Locked out of portal after reset
+  start: "2026-10-13 09:24"
+  gap_min: 3
+  messages:
+    - from: customer
+      text: "Account ACME-LOG-0042. I reset my portal password at 9:05 this morning (Oct 13) and now the portal says the account is locked."
+    - from: customer
+      text: "Tried again at 9:12 and 9:20 with the new password, same message. I need to book a pickup before noon."
+
+- id: ACM-007
+  customer: Acme Logistics
+  user: acme-u1
+  subject: ETA for SH-8120 to Denver
+  start: "2026-10-13 08:00"
+  messages:
+    - from: customer
+      text: "SH-8120, 3 pallets, express, Seattle to Denver, dispatched Oct 11 at 16:00. Tracking NF-775540 last scan: Oct 12 22:10 'Departed Boise hub'. My customer needs a delivery date. What is the ETA?"
+
+- id: ACM-008
+  customer: Acme Logistics
+  user: acme-u2
+  subject: Fuel surcharge on INV-21044
+  start: "2026-10-09 11:00"
+  messages:
+    - from: customer
+      text: "INV-21044 for shipment SH-7990 charges a fuel surcharge of $134.40 (12 percent). Our accepted quote Q-5521 was $1,120.00 flat with no surcharge line. Why was it added, and can it be removed?"
+
+- id: ACM-009
+  customer: Acme Logistics
+  user: acme-u1
+  subject: 11 of 12 boxes received
+  start: "2026-10-13 08:30"
+  gap_min: 20
+  messages:
+    - from: customer
+      text: "Shipment SH-8044 was delivered Oct 12 and the proof of delivery is signed by R. Alvarez at 14:32. The driver slip says 12 boxes but we received 11. Box 7 of 12 (sensor kits, about $900) is missing."
+    - from: customer
+      text: "I counted twice with the slip in hand. We signed for 11 by mistake, sorry about that. Can you reship or refund box 7?"
+
+- id: ACM-010
+  customer: Acme Logistics
+  user: acme-u2
+  subject: Add a viewer to our account
+  start: "2026-10-13 09:30"
+  messages:
+    - from: customer
+      text: "I am the account owner for ACME-LOG-0042. Please add jordan.lee@example.com as a Viewer so they can see shipment status."
+
+# ---------------------------------------------------------------- Bluepeak Health (medium)
+- id: BPH-001
+  customer: Bluepeak Health
+  user: bp-u1
+  subject: Lab results not showing in portal
+  start: "2026-10-14 09:00"
+  messages:
+    - from: customer
+      text: "I had blood work done on Tuesday Oct 6 at Eastside Lab (accession L-5521-8). It is now Oct 14 and my portal Results tab is empty. The Visit Summary shows 'Lab: Collected - in review'."
+    - from: support
+      text: "Thanks for reaching out. Results appear once the clinician has released them, which normally takes 2 to 5 business days. We are checking the release status for your accession number."
+    - from: customer
+      text: "It has been 8 days, more than 5 business days. A friend said hers showed up in two days. Is something wrong with my account or did the lab lose it? Please confirm the status."
+
+- id: BPH-002
+  customer: Bluepeak Health
+  user: bp-u2
+  subject: Need to reschedule Thursday appointment
+  start: "2026-10-13 09:00"
+  gap_min: 30
+  messages:
+    - from: customer
+      text: "I need to move my Thursday Oct 15 appointment at 10:30 with Dr. Alvarez (Eastside Clinic). A work conflict came up. It is Tuesday Oct 13, 9am now."
+    - from: support
+      text: "Happy to help. Do you have a preferred day or time next week?"
+    - from: customer
+      text: "Any morning on Tuesday Oct 20 or Wednesday Oct 21. I tried the portal but the Reschedule button is greyed out."
+    - from: customer
+      text: "Also, will I be charged a late fee since it is less than 48 hours away? I have not cancelled or moved an appointment before this year."
+
+- id: BPH-003
+  customer: Bluepeak Health
+  user: bp-u3
+  subject: Statement says insurance not applied
+  start: "2026-10-13 10:00"
+  messages:
+    - from: customer
+      text: "My latest statement (ST-88213) shows the full $342.00 for my Mar 3 follow-up visit as patient responsibility. My insurance, Northgate Health PPO (member ID NGH-4420917), should have covered most of it."
+    - from: support
+      text: "I am sorry for the confusion. Can you confirm that the insurance card was scanned at check-in for that visit?"
+    - from: customer
+      text: "Yes, I gave the front desk the card at check-in on Mar 3 and they scanned it. The statement lists 'Insurance: none on file'. I have not changed plans since last year."
+
+- id: BPH-004
+  customer: Bluepeak Health
+  user: bp-u1
+  subject: Charged copay twice
+  start: "2026-10-12 18:00"
+  messages:
+    - from: customer
+      text: "My Visa ending 2210 shows two $40.00 charges from Bluepeak, both on Oct 12, for one copay (visit on Oct 12 with Dr. Patel)."
+    - from: support
+      text: "We can look into that. Are both charges marked as posted on your card statement, or is one pending?"
+    - from: customer
+      text: "Both say POSTED in my banking app, not pending. Charge times 10:42 and 10:44."
+    - from: customer
+      text: "I would like one of them refunded please."
+
+- id: BPH-005
+  customer: Bluepeak Health
+  user: bp-u2
+  subject: Proxy access for my mother
+  start: "2026-10-13 14:00"
+  messages:
+    - from: customer
+      text: "I want to manage my mother's appointments and results in the portal. She is 78, lives with me, and is not comfortable with computers. Her patient ID is BH-300415."
+    - from: support
+      text: "We can set up proxy access. It needs a signed authorisation form from your mother."
+    - from: customer
+      text: "Where do I get the form? Does she have to come in, or can she sign at home and I send it back?"
+
+- id: BPH-006
+  customer: Bluepeak Health
+  user: bp-u3
+  subject: Reminder texts show wrong time
+  start: "2026-10-14 11:00"
+  messages:
+    - from: customer
+      text: "My reminder text says my appointment is at 2:00 PM, but the portal says 11:00 AM on Oct 19. Which one is right?"
+    - from: support
+      text: "Thanks for flagging. Which time zone is your phone set to, and did you recently travel or move?"
+    - from: customer
+      text: "I moved from Chicago to Denver last month and updated my address in the portal. My profile time zone still shows Central Time. The clinic is in Denver."
+
+- id: BPH-007
+  customer: Bluepeak Health
+  user: bp-u1
+  subject: Transfer records to new provider
+  start: "2026-10-14 15:00"
+  messages:
+    - from: customer
+      text: "I am switching primary care doctors and need my records sent to Dr. Amir Haddad at Summit Family Practice."
+    - from: support
+      text: "We can do that with a signed release form. Do you have the receiving provider's fax or secure address?"
+    - from: customer
+      text: "Fax is 555-0142. My first visit with them is Oct 26, 12 days from now. How long will the transfer take and do I need to come in to sign?"
+
+- id: BPH-008
+  customer: Bluepeak Health
+  user: bp-u2
+  subject: Telehealth link shows error
+  start: "2026-10-14 15:20"
+  gap_min: 3
+  messages:
+    - from: customer
+      text: "My telehealth visit with Dr. Patel starts at 3:30 PM today (Oct 14) and the link only says 'Something went wrong'. It is 3:20 now."
+    - from: support
+      text: "Sorry about that. Please try refreshing and then a different browser."
+    - from: customer
+      text: "Tried Chrome and Safari on my phone, same error in both. Camera and microphone are allowed."
+    - from: customer
+      text: "I really cannot miss this, it is a follow-up for my son. What are my options?"
+
+- id: BPH-009
+  customer: Bluepeak Health
+  user: bp-u3
+  subject: Bill lists a provider I never saw
+  start: "2026-10-13 12:00"
+  messages:
+    - from: customer
+      text: "The bill (ST-90117, $215.00) for my April 18 visit lists Dr. Weiss as the provider, but I only saw Dr. Alvarez, at 9:00 AM."
+    - from: support
+      text: "Thanks for pointing that out. Can you confirm the date of service and whether you saw anyone else at the clinic?"
+    - from: customer
+      text: "Date is April 18. I saw only Dr. Alvarez, nobody else. I do not want to pay for a visit with someone I did not see. Please correct the bill or explain."
+
+- id: BPH-010
+  customer: Bluepeak Health
+  user: bp-u1
+  subject: Specialist referral not visible
+  start: "2026-10-14 09:30"
+  messages:
+    - from: customer
+      text: "Dr. Patel said she sent a referral to Lakeside Cardiology on Oct 7 (referral R-70412), but my portal Referrals tab is empty."
+    - from: support
+      text: "Referrals normally show within one business day. Let us check the status."
+    - from: customer
+      text: "Lakeside Cardiology says they never received anything, and it has been a week. Who is supposed to follow up, and by when? My appointment request with them is blocked until the referral exists."
+
+# ---------------------------------------------------------------- Cobalt Retail (long, messy)
+- id: CRT-001
+  customer: Cobalt Retail
+  user: cr-u1
+  subject: Order 55102 never arrived
+  start: "2026-10-11 09:00"
+  gap_min: 600
+  messages:
+    - from: customer
+      text: "My order 55102 was supposed to arrive on the 3rd. It is the 11th now. Where is it? Forwarding the confirmation below."
+      forward: |
+        From: Cobalt Retail Orders <orders@cobaltretail.example>
+        Date: Wed, 30 Sep 2026 19:22
+        Subject: Your Cobalt order #55102 is confirmed
+        To: tom.brandt@example.com
+
+        Hi Tom,
+        Thanks for your order! Here is what is on its way:
+          1 x Trailhead Insulated Pack, 28L, Forest      $64.00
+          1 x Merino Wool Gift Set (Birthday Edition)    $49.00
+          Subtotal $113.00 | Standard shipping $7.95 | Tax $9.14 | Total $130.09
+        Ship to: Tom Brandt, 1180 SW Alder St, Portland, OR 97205
+        Shipping method: Standard (3-5 business days)   Estimated delivery: Saturday, October 3
+        Track your order: https://track.cobaltretail.example/55102
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. You are receiving this email because you placed an order at cobaltretail.example. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "I am sorry for the delay. I see tracking says In Transit. Let me check with the carrier."
+    - from: customer
+      text: "In Transit for a week is not an answer. I need to know where it is. Pasting the tracking page so you can see there is nothing new."
+      log: |
+        TRACKING 1Z88X4410552 - Northline Freight
+        Oct 01 16:05  Shipment information received
+        Oct 02 18:41  Picked up - Reno, NV
+        Oct 03 04:12  Departed facility - Reno, NV
+        Oct 04 22:30  Arrived at hub - Salt Lake City, UT
+        Oct 05 07:55  Departed hub - Salt Lake City, UT
+        Oct 05 19:02  In transit
+        Oct 06 - Oct 11  No further scans
+        Status as of Oct 11 06:00: In Transit
+    - from: support
+      text: "We have opened a trace with the carrier. It can take 3 to 5 business days."
+    - from: customer
+      text: "You said that already on Monday. It has been five days since the trace and nothing."
+    - from: support
+      text: "I apologise. I can see the trace is still open. I will chase the carrier today."
+    - from: customer
+      text: "This is the third time I am asking. Where is my order? It was a birthday gift and the birthday was on the 8th."
+    - from: support
+      text: "I understand how frustrating this is. Would you like a replacement or a refund?"
+    - from: customer
+      text: "I want to know why nobody told me earlier that it was lost. Is it lost or not? Just tell me honestly."
+    - from: customer
+      text: "And if it is lost I want the replacement express and I do not want to pay shipping again."
+
+- id: CRT-002
+  customer: Cobalt Retail
+  user: cr-u2
+  subject: Refund promised, not received
+  start: "2026-10-23 09:00"
+  gap_min: 600
+  messages:
+    - from: customer
+      text: "I returned a jacket on the 2nd, order 54877. Your email said refund within 5 days. It's been 3 weeks. Return approval email is below."
+      forward: |
+        From: Cobalt Returns <returns@cobaltretail.example>
+        Date: Fri, 02 Oct 2026 11:08
+        Subject: Your return for order #54877 is approved
+        To: yuki.tanaka@example.com
+
+        Hi Yuki,
+        Your return request for order #54877 (Alpine Shell Jacket, size M, $129.00) is approved. Print the attached label, pack the item in its original packaging and drop it off with the carrier. Once your parcel arrives at our warehouse we inspect it and issue your refund to your original payment method. Refunds typically appear within 5 business days of inspection.
+
+        Return label: RL-54877-9922 (USPS)   Return shipping: $7.50 deducted from refund (change of mind)
+        Return window ends: Nov 1, 2026
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. This is an automated message, please do not reply to it directly. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "Sorry about this. Can you confirm the refund method you expect and whether you got a refund confirmation email?"
+    - from: customer
+      text: "Back to my Visa. No confirmation email at all, just the return label email from the start."
+    - from: support
+      text: "Thanks. I can see the parcel was scanned at our warehouse on the 9th. Inspection is still pending."
+    - from: customer
+      text: "Pending for 2 weeks? The return window is 30 days for me but apparently inspection has no window. Here is the tracking for the return."
+      log: |
+        RETURN TRACKING 9400 1118 9922 0043 7781 02 (USPS)
+        Oct 02 11:20  Label created
+        Oct 03 15:44  Accepted at drop-off - Portland, OR
+        Oct 07 09:02  Arrived at regional facility - Reno, NV
+        Oct 09 13:36  Delivered - Cobalt Returns, Reno, NV
+        Signed for by: M. DELGADO
+    - from: support
+      text: "I will ask the warehouse to prioritise it."
+    - from: customer
+      text: "You said that last time too. Please tell me a date. An actual date."
+    - from: support
+      text: "I do not have the exact date yet but I have flagged it."
+    - from: customer
+      text: "Flagged is not a date. I will dispute this with my bank if I don't have the money by Friday."
+    - from: customer
+      text: "To be clear: item 54877, jacket, $129.00, returned on the 2nd, scanned on the 9th. I want my $129 refunded."
+    - from: customer
+      text: "Also I paid $9.95 for shipping, do I get that back or not?"
+
+- id: CRT-003
+  customer: Cobalt Retail
+  user: cr-u3
+  subject: Wrong item sent, exchange keeps going wrong
+  start: "2026-10-09 18:00"
+  gap_min: 1080
+  messages:
+    - from: customer
+      text: "I ordered a large grey hoodie, order 55340. I got a medium black one. My confirmation is below."
+      forward: |
+        From: Cobalt Retail Orders <orders@cobaltretail.example>
+        Date: Sat, 03 Oct 2026 08:51
+        Subject: Your Cobalt order #55340 is confirmed
+        To: olivia.reyes@example.com
+
+        Hi Olivia,
+        Thanks for your order!
+          1 x Cobalt Everyday Hoodie, Grey, L      $68.00
+        Subtotal $68.00 | Standard shipping $7.95 | Tax $5.31 | Total $81.26
+        Ship to: Olivia Reyes, 2290 NE Fremont St, Apt 5B, Portland, OR 97212
+        Estimated delivery: Thursday, October 8
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. You are receiving this email because you placed an order at cobaltretail.example. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "I am sorry about the mix up. We will send the correct hoodie. Can you send a photo of the item and the label?"
+    - from: customer
+      text: "Photos attached. Medium, black. I ordered large, grey. Please just send the right one."
+    - from: support
+      text: "The replacement has been created, you will get tracking shortly."
+    - from: customer
+      text: "Got the replacement today. It is a large black hoodie. Still not grey! Here is the packing slip from this second box."
+      log: |
+        PACKING SLIP - Replacement for Order 55340 (R-55340-1)
+        SKU HD-GRY-L   Cobalt Everyday Hoodie, Grey, L    qty 1
+        Picked by: station 09 | Packed: Oct 12 10:22 | Carton C-88213
+        [Handwritten note by me: item in the box is tagged HD-BLK-L, black]
+    - from: support
+      text: "I apologise. It looks like grey was out of stock in large. We should have told you."
+    - from: customer
+      text: "So why was my order accepted in the first place? I paid for grey large."
+    - from: customer
+      text: "I do not want black. I want a refund for the hoodie, or grey in large if it comes back in stock."
+    - from: customer
+      text: "And what do I do with two black hoodies now? I don't want to pay to send them back."
+
+- id: CRT-004
+  customer: Cobalt Retail
+  user: cr-u1
+  subject: Promo code not applied then charged twice
+  start: "2026-10-09 07:00"
+  gap_min: 480
+  messages:
+    - from: customer
+      text: "I used code SPRING20 at checkout and the discount did not apply. Order 55419, total $84.50. Receipt below."
+      forward: |
+        From: Cobalt Retail Orders <orders@cobaltretail.example>
+        Date: Thu, 08 Oct 2026 20:14
+        Subject: Your Cobalt order #55419 receipt
+        To: tom.brandt@example.com
+
+        Hi Tom,
+        Order #55419   Items: 2 x Trailhead Water Bottle 1L ($21.00 each), 1 x Summit Daypack ($42.50)
+        Subtotal $84.50 | Promo: none applied | Shipping $0.00 (free over $75) | Tax $0.00 | Total $84.50
+        Paid with: Visa ending 2210
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "Sorry. Promo codes need to be entered before payment. Was the code entered on the payment page?"
+    - from: customer
+      text: "Yes, I entered it, it showed -$16.90 and then the final screen said $84.50. That is the undiscounted price."
+    - from: customer
+      text: "Then my card was charged twice, $84.50 and $84.50. I only placed one order. My card activity is pasted here."
+      log: |
+        CARD ACTIVITY - Visa ending 2210
+        Oct 08  COBALT RETAIL  PORTLAND OR   $84.50   POSTED
+        Oct 08  COBALT RETAIL  PORTLAND OR   $84.50   POSTED
+        Oct 09  GROCERY OUTLET PORTLAND OR   $52.17   POSTED
+    - from: support
+      text: "Let me check the payment records. Sometimes a pre-authorisation shows as a second charge."
+    - from: customer
+      text: "Mine says posted, not pending. And I checked with my bank, it's real."
+    - from: support
+      text: "Thank you for checking. I will escalate to billing."
+    - from: customer
+      text: "So to summarize: I want the discount of $16.90 and the duplicate $84.50 refunded. Please confirm both."
+
+- id: CRT-005
+  customer: Cobalt Retail
+  user: cr-u2
+  subject: Gift card balance wrong
+  start: "2026-10-14 12:00"
+  gap_min: 90
+  messages:
+    - from: customer
+      text: "I received a $100 gift card from my sister. Balance in your portal says $37. The email she forwarded me is below."
+      forward: |
+        From: Cobalt Retail Gift Cards <giftcards@cobaltretail.example>
+        Date: Wed, 14 Oct 2026 07:31
+        Subject: You have received a Cobalt gift card
+        To: yuki.tanaka@example.com
+
+        Hi Yuki, Mei sent you a Cobalt gift card!
+        Amount: $100.00     Card number: ending 4417     PIN: sent separately
+        Message from Mei: Happy early birthday! Spend it on something fun.
+        Redeem at checkout. Cards never expire and cannot be exchanged for cash.
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. This is an automated message. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "Sorry about that. Have you used the card on an order before?"
+    - from: customer
+      text: "No, never! I wanted to use it today and it says $37.00."
+    - from: support
+      text: "Could you send the card number and a screenshot of the balance page?"
+    - from: customer
+      text: "Sent both just now. The number ends in 4417. Balance shows $37.00 as I said. Text of the page below."
+      log: |
+        GIFT CARD BALANCE
+        Card ending 4417
+        Original amount: $100.00
+        Remaining balance: $37.00
+        Last activity: Oct 14 07:49 - redemption - Order 55361 - $63.00
+    - from: customer
+      text: "My sister bought it on the 14th and the email said $100. I can forward it."
+    - from: customer
+      text: "Please fix my balance, I have an order waiting in my cart."
+
+- id: CRT-006
+  customer: Cobalt Retail
+  user: cr-u3
+  subject: Cancelled subscription but still billed
+  start: "2026-10-06 09:00"
+  gap_min: 480
+  messages:
+    - from: customer
+      text: "I cancelled my Cobalt Box subscription on the 26th and I was charged $39.00 on the 1st. The renewal notice you sent is below."
+      forward: |
+        From: Cobalt Box <box@cobaltretail.example>
+        Date: Mon, 21 Sep 2026 06:00
+        Subject: Your Cobalt Box renews on September 28
+        To: olivia.reyes@example.com
+
+        Hi Olivia,
+        Your Cobalt Box subscription (Monthly, $39.00) renews on September 28, 2026. To cancel or change your plan, give notice at least 3 business days before the renewal date in Account > Subscriptions. After renewal the current period is not refunded.
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. Manage preferences | Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "Sorry about that. Let me look. Do you have a cancellation confirmation email?"
+    - from: customer
+      text: "I clicked cancel on the website and it said subscription ended. I did not get an email. Billing history pasted."
+      log: |
+        BILLING HISTORY - Cobalt Box (Monthly)
+        Jul 28  $39.00  Paid   Box #14
+        Aug 28  $39.00  Paid   Box #15
+        Sep 26  Cancellation requested (web)
+        Sep 28  Renewal date
+        Oct 01  $39.00  Charged  Box #16  (shipped Oct 05)
+    - from: support
+      text: "I see the cancellation was requested on the 26th. The renewal date was the 28th, which is within the 3 day notice window."
+    - from: customer
+      text: "Nobody told me about a 3 day notice. That is not on the cancel button."
+    - from: support
+      text: "I understand. The terms are shown at sign-up."
+    - from: customer
+      text: "I signed up two years ago! You cannot expect me to remember that."
+    - from: customer
+      text: "Also now I am being sent another box, it shipped yesterday. Did you charge me for that too?"
+    - from: support
+      text: "The box that shipped is the one for the charge on the 1st."
+    - from: customer
+      text: "So I paid for a box I tried to cancel. I want a refund of the $39 and I will return the box unopened."
+    - from: customer
+      text: "Please confirm in writing that the subscription is fully ended and I will not be billed again."
+    - from: customer
+      text: "I am also considering a chargeback if this is not sorted today."
+
+- id: CRT-007
+  customer: Cobalt Retail
+  user: cr-u1
+  subject: Sofa arrived damaged, pickup keeps being missed
+  start: "2026-10-13 08:00"
+  gap_min: 600
+  messages:
+    - from: customer
+      text: "My sofa, order 55021, arrived with a torn leg and a ripped seam. I sent photos on the 5th. Delivery confirmation below."
+      forward: |
+        From: Cobalt Home Delivery <delivery@cobaltretail.example>
+        Date: Mon, 05 Oct 2026 13:40
+        Subject: Delivered: order #55021 (Lowell 3-Seat Sofa)
+        To: tom.brandt@example.com
+
+        Hi Tom, your Lowell 3-Seat Sofa, Slate ($1,149.00) was delivered today at 13:12 by our white-glove partner. Signed by: T. Brandt.
+        Found a problem? Report damage within 7 days with photos and keep all packaging.
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "I am sorry. We have approved a replacement. We will arrange pickup of the damaged sofa."
+    - from: customer
+      text: "Pickup was booked for the 9th between 8 and 12. Nobody came. I took a morning off work."
+    - from: support
+      text: "I apologise. I will rebook the pickup."
+    - from: customer
+      text: "Rebooked for the 12th, 1 to 5. Again nobody came. I waited all afternoon. Here is the booking history from my portal."
+      log: |
+        PICKUP REQUESTS - order 55021
+        PU-2207  Oct 09  08:00-12:00  Status: Missed (carrier: no driver assigned)
+        PU-2231  Oct 12  13:00-17:00  Status: Missed (carrier: customer not available)
+        Note on PU-2231: customer not available. Attempt 14:55, no answer.
+    - from: support
+      text: "I am very sorry. I will speak to the freight team."
+    - from: customer
+      text: "This is the third thing that has gone wrong. Please do not rebook without calling me first."
+    - from: customer
+      text: "I want a confirmed date and a phone number for the driver. I can only do Saturday morning."
+    - from: customer
+      text: "Also, is the replacement sofa going to be delivered at the same time as the pickup? I don't want to have two sofas in my apartment."
+    - from: customer
+      text: "Please answer all of that and don't just say sorry again."
+
+- id: CRT-008
+  customer: Cobalt Retail
+  user: cr-u2
+  subject: Return label never emailed
+  start: "2026-10-13 10:00"
+  gap_min: 20
+  messages:
+    - from: customer
+      text: "I started a return for order 55200 four days ago. I never received a return label. The confirmation page text is below."
+      forward: |
+        From: Cobalt Returns <returns@cobaltretail.example>
+        Date: Fri, 09 Oct 2026 16:12
+        Subject: We received your return request for order #55200
+        To: yuki.tanaka@example.com
+
+        Hi Yuki, we have your return request for order #55200 (Linen Throw Blanket, $58.00). A prepaid return label will be emailed to you within one business day. Your return window ends on Oct 20, 2026.
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. This is an automated message. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "Sorry. Labels are emailed within one business day. Did you check your spam folder?"
+    - from: customer
+      text: "Yes. Spam, promotions, everything. Nothing. Is the email address on the order correct?"
+    - from: support
+      text: "The order shows yuki.tanaka@example.com. Is that right?"
+    - from: customer
+      text: "Yes that's my email. So why no label?"
+    - from: support
+      text: "I have resent the label just now. Please check again."
+    - from: customer
+      text: "Nothing arrived. It has been 20 minutes. The return window ends on the 20th, I don't want to lose my refund. Mail search results pasted."
+      log: |
+        MAIL SEARCH: from:cobaltretail.example (All Mail, last 7 days)
+        Oct 09 16:12  We received your return request for order #55200
+        Oct 13 09:03  [Your order #55200] Follow-up survey
+        (2 results; no message containing a return label)
+    - from: customer
+      text: "Can you send a QR code or attach the label here? Whatever is fastest."
+
+- id: CRT-009
+  customer: Cobalt Retail
+  user: cr-u3
+  subject: Order split into 3 shipments, one lost
+  start: "2026-10-13 09:00"
+  gap_min: 120
+  messages:
+    - from: customer
+      text: "My order 55288 was split into three parcels. Two arrived. The third, the lamp, has not. The shipment notice is below."
+      forward: |
+        From: Cobalt Retail Shipping <shipping@cobaltretail.example>
+        Date: Mon, 05 Oct 2026 17:45
+        Subject: Your order #55288 has shipped in 3 packages
+        To: olivia.reyes@example.com
+
+        Hi Olivia, your order ships from different warehouses:
+          Package 1 of 3: Table Runner x2, Napkin Set   Tracking 1Z88X4410771   Est. Oct 8
+          Package 2 of 3: Candle Trio                    Tracking 1Z88X4410772   Est. Oct 8
+          Package 3 of 3: Arc Floor Lamp (Brass)         Tracking 1Z88X4410773   Est. Oct 9
+        Each package has its own tracking number and delivery estimate.
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. Unsubscribe | Privacy Policy | Terms of Sale
+    - from: support
+      text: "Thanks for letting us know. Split orders have separate tracking numbers. Do you have the one for the lamp?"
+    - from: customer
+      text: "Tracking for the lamp says Delivery Exception since Tuesday. No other detail. Pasting the page."
+      log: |
+        TRACKING 1Z88X4410773 - Northline Freight
+        Oct 05 21:10  Picked up - Reno, NV
+        Oct 07 11:48  Arrived at facility - Portland, OR
+        Oct 08 07:30  Out for delivery
+        Oct 08 16:22  Delivery Exception - see carrier notes
+        Oct 09 - Oct 13  No further scans
+    - from: support
+      text: "A Delivery Exception can mean an access problem or a wrong address. Is the delivery address correct?"
+    - from: customer
+      text: "Same address as the other two parcels which arrived fine. So no."
+    - from: support
+      text: "I will open a trace with the carrier for the lamp."
+    - from: customer
+      text: "How long will a trace take? I need the lamp for an event on Saturday."
+    - from: customer
+      text: "If it can't be here by Friday, I'd rather get a refund for the lamp and keep the rest."
+    - from: customer
+      text: "Please tell me which one it will be, replacement or refund, so I can plan."
+
+- id: CRT-010
+  customer: Cobalt Retail
+  user: cr-u1
+  subject: Account locked, need address change on open order
+  start: "2026-10-13 09:40"
+  gap_min: 20
+  messages:
+    - from: customer
+      text: "My account is locked and the reset email never comes. I need to change the address on order 55501, which ships tomorrow. Lock notification below."
+      forward: |
+        From: Cobalt Account Security <security@cobaltretail.example>
+        Date: Tue, 13 Oct 2026 08:02
+        Subject: Your Cobalt account has been temporarily locked
+        To: tom.brandt@example.com
+
+        We noticed 5 unsuccessful sign-in attempts on your account. For your security it is locked for 30 minutes. If this was not you, reset your password now. We will never ask for your password by email or chat.
+
+        (c) 2026 Cobalt Retail Inc. All rights reserved. This is an automated security message. Privacy Policy | Terms of Sale
+    - from: support
+      text: "Sorry. Accounts lock for 30 minutes after 5 failed attempts. Reset links expire after 60 minutes."
+    - from: customer
+      text: "I know all of that, I already waited. I requested three reset emails and none arrived. My attempt log is below."
+      log: |
+        MY LOG (Tue Oct 13)
+        08:02  locked notice received
+        08:41  waited 30 min, signed in with new password -> 'Invalid credentials'
+        08:44  requested reset email #1   (nothing)
+        09:10  requested reset email #2   (nothing)
+        09:35  requested reset email #3   (nothing)
+        Order 55501 ships Oct 14. Old address: 1180 SW Alder St, Portland.
+    - from: support
+      text: "Could you check your spam folder? Only the newest reset link works."
+    - from: customer
+      text: "I did check. Nothing. The order ships tomorrow so the address needs to change today. New address is 220 Pine Street, Apt 5B, Portland, OR 97209."
+    - from: customer
+      text: "Can you just change it for me, I will verify however you need."

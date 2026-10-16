@@ -11,7 +11,6 @@ import revenium_middleware.openai  # noqa: F401  (auto-instruments on import)
 
 PRODUCT = "Ticketfox AI Assistant"
 ENVIRONMENT = "demo"
-AGENT_VERSION = "1.0.0"
 
 
 class SpendLimitExceeded(RuntimeError):
@@ -44,7 +43,7 @@ class Call(NamedTuple):
     cost: float
 
 
-def build_metadata(ticket, customer, run_id, *, agent, task_type, step, parent=None, retry=0):
+def build_metadata(ticket, customer, run_id, agent_version, *, agent, task_type, step, parent=None, retry=0):
     user = next(u for u in customer["users"] if u["id"] == ticket["user"])
     trace_id = f"{ticket['id']}-{run_id}"  # one trace per ticket per run
     md = {
@@ -58,7 +57,7 @@ def build_metadata(ticket, customer, run_id, *, agent, task_type, step, parent=N
         "agentic_job_id": f"job-{trace_id}",
         "transaction_name": step,
         "environment": ENVIRONMENT,
-        "agent_version": AGENT_VERSION,
+        "agent_version": agent_version,
         "retry_number": retry,
     }
     if parent:

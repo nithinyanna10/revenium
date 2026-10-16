@@ -1,25 +1,33 @@
-"""Prompts and context selection for the three agents. No API calls here."""
+"""Prompts and context selection for the four agents. No API calls here."""
 import json
 import math
 import re
 from collections import Counter
 
 CATEGORIES = "shipping, billing, returns, account, appointments, product, other"
+CRITERIA = ("accuracy", "completeness", "tone", "actionability")
 
 
 def thread_text(messages):
-    return "\n".join(f"{'Customer' if m['from'] == 'customer' else 'Support'}: {m['text']}" for m in messages)
+    """The raw email thread exactly as a helpdesk stores it: every email with its quotes/signatures."""
+    return "\n\n=====\n\n".join(m["text"] for m in messages)
 
 
 def _words(text):
-    # crude stem (billed/billing -> bill) so inflected forms match
-    return [re.sub(r"(ing|ed|es|s)$", "", w) for w in re.findall(r"[a-z]{4,}", text.lower())]
+    # crude stem (billed/billing -> bill, reschedule/rescheduling -> reschedul) so inflections match
+    return [re.sub(r"(ing|ed|es|s|e)$", "", w) for w in re.findall(r"[a-z]{4,}", text.lower())]
 
 
 def top_kb(kb, query, n):
-    """Simple keyword match: query words weighted by rarity across articles (IDF), no vector DB."""
+    """Simple keyword match: query words weighted by rarity across articles (IDF), no vector DB.
+    Words in an article's title count triple, since titles name the topic."""
     q = set(_words(query))
-    counts = {name: Counter(_words(text)) for name, text in kb}
+    counts = {}
+    for name, text in kb:
+        c = Counter(_words(text))
+        for w in _words(text.splitlines()[0]):
+            c[w] += 3
+        counts[name] = c
     idf = {w: math.log(len(kb) / sum(w in c for c in counts.values())) for w in q if any(w in c for c in counts.values())}
 
     def score(article):
@@ -29,15 +37,19 @@ def top_kb(kb, query, n):
     return sorted(kb, key=score, reverse=True)[:n]
 
 
-def responder_context(ticket, kb, cfg):
+def kb_query(ticket, summary=None):
+    return " ".join([ticket["subject"], ticket["subject"], ticket["latest"], summary or ""])
+
+
+def responder_context(ticket, kb, cfg, summary=None):
     """Apply the mode's context rules: how much thread, how much knowledge base."""
-    msgs = ticket["messages"]
-    n = cfg["responder_thread_messages"]
-    if n != "all":
-        msgs = msgs[-n:]
+    if cfg["responder_context"] == "full_thread":
+        thread = thread_text(ticket["messages"])
+    else:
+        thread = f"SUMMARY OF THE THREAD SO FAR\n{summary}\n\nLATEST CUSTOMER MESSAGE\n{ticket['latest']}"
     k = cfg["responder_kb_articles"]
-    articles = kb if k == "all" else top_kb(kb, ticket["subject"] + " " + thread_text(msgs), k)
-    return thread_text(msgs), "\n\n".join(text for _, text in articles)
+    articles = kb if k == "all" else top_kb(kb, kb_query(ticket, summary), k)
+    return thread, "\n\n".join(text for _, text in articles)
 
 
 def parse_json(text):
@@ -45,6 +57,17 @@ def parse_json(text):
         return json.loads(text)
     except ValueError:
         return {}
+
+
+def summary_messages(ticket, customer):
+    return [
+        {"role": "system", "content": (
+            f"You are summarizer-agent for the support desk of {customer['name']}. Condense the email thread "
+            "into a factual brief of at most 150 words. Ignore quoted repeats, signatures and disclaimers. "
+            "Include: who the customer is, order/shipment/invoice/account identifiers, amounts and dates, "
+            "what was already tried or promised, what is still unresolved, and the customer's mood.")},
+        {"role": "user", "content": f"Subject: {ticket['subject']}\n\nTHREAD\n{thread_text(ticket['messages'])}"},
+    ]
 
 
 def triage_messages(ticket, customer):
@@ -60,7 +83,7 @@ def triage_messages(ticket, customer):
 def draft_messages(ticket, customer, triage, thread, kb_text, feedback=None):
     system = (
         f"You are responder-agent, drafting a reply on behalf of the {customer['name']} support team. "
-        "Use only the knowledge base below; never invent policies, dates or amounts. "
+        "Use only the knowledge base below and the facts in the ticket; never invent policies, dates or amounts. "
         "Answer every open question, be warm and concise, and give concrete next steps.\n\n"
         f"KNOWLEDGE BASE\n{kb_text}"
     )
@@ -72,13 +95,18 @@ def draft_messages(ticket, customer, triage, thread, kb_text, feedback=None):
 
 
 def review_messages(ticket, draft):
+    """Always judges against the FULL original thread, in every mode."""
     return [
         {"role": "system", "content": (
-            "You are qa-reviewer-agent. Score a drafted support reply from 0.0 to 1.0 and be strict. "
-            "Deduct for: any open customer question left unanswered; ignoring or repeating things "
-            "already tried earlier in the thread; no concrete next step or owner; invented policy, "
-            "dates or amounts; wrong tone; padding. 0.9 or higher means ready to send with no edits. "
-            'Reply with JSON only: {"score": number, "feedback": "max 40 words on the biggest fix"}')},
+            "You are qa-reviewer-agent. Judge a drafted support reply against the full email thread. "
+            "Score each criterion from 0.0 to 1.0 and be strict:\n"
+            "- accuracy: every fact, identifier, date and amount matches the thread; no invented policy\n"
+            "- completeness: every open customer question is answered; earlier contacts are acknowledged "
+            "and nothing already tried is repeated\n"
+            "- tone: warm, calm, professional, owns the problem, no blame, no padding\n"
+            "- actionability: concrete next steps, owners and timeframes the customer can rely on\n"
+            'Reply with JSON only: {"accuracy": n, "completeness": n, "tone": n, "actionability": n, '
+            '"feedback": "max 40 words on the biggest fix"}')},
         {"role": "user", "content": (
             f"Subject: {ticket['subject']}\n\nTHREAD\n{thread_text(ticket['messages'])}\n\nDRAFT REPLY\n{draft}")},
     ]
