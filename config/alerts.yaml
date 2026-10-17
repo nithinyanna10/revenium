@@ -1,0 +1,4 @@
+# written by scripts/setup_alerts.py --retake; read by ticketfox.run --watch-alerts
+daily_budget_usd: 2.25
+responder_spike_usd: 0.20
+jump_enabled: false

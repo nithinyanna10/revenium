@@ -1,6 +1,6 @@
 # The whole baseline / optimized / incident diff lives in this file.
 # Per run tag: counts call/eval rows carrying the current --run-tag, across all result files.
-spend_limit_usd: 3.0
+spend_limit_usd: 4.0
 
 # OpenAI list prices (USD per 1M tokens). Checked against Revenium's per-call costs: input/output match, and
 # prompt-cached input tokens bill at cached_input (verified for both models).

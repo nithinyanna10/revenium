@@ -44,11 +44,14 @@ def kb_query(ticket, summary=None):
     return " ".join([ticket["subject"], ticket["subject"], ticket["latest"], summary or ""])
 
 
+def thread_class(ticket, cfg):
+    """'long' if the raw thread exceeds long_thread_tokens (2000 when the mode has no routing), else 'short'."""
+    return "long" if len(_enc.encode(thread_text(ticket["messages"]))) > cfg.get("long_thread_tokens", 2000) else "short"
+
+
 def route(ticket, cfg):
-    """Tiered routing (optimized mode): 'long' if the raw thread exceeds long_thread_tokens, else 'short'."""
-    if cfg["responder_context"] != "routed":
-        return None
-    return "long" if len(_enc.encode(thread_text(ticket["messages"]))) > cfg["long_thread_tokens"] else "short"
+    """Tiered routing (optimized mode): the thread class, or None when the mode doesn't route (baseline/incident)."""
+    return thread_class(ticket, cfg) if cfg["responder_context"] == "routed" else None
 
 
 def responder_context(ticket, kb, cfg, summary=None, route=None):

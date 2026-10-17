@@ -8,6 +8,7 @@ from ticketfox.metering import build_metadata, chat
 class TicketRun:
     def __init__(self, ticket, customer, mode, cfg, kb, spend, run_id, rows, run_tag=None):
         self.route = agents.route(ticket, cfg)  # 'short' | 'long' | None (baseline/incident)
+        self.trace_class = agents.thread_class(ticket, cfg)  # sent as trace_type in every mode
         self.ticket, self.customer, self.mode, self.cfg, self.kb = ticket, customer, mode, cfg, kb
         self.spend, self.run_id, self.run_tag = spend, run_id, run_tag
         self.parent = None  # previous call's transaction id -> parent_transaction_id of the next
@@ -15,7 +16,7 @@ class TicketRun:
 
     def call(self, role, agent, task_type, step, messages, *, retry=0, json_mode=False, max_tokens=300, model=None):
         md = build_metadata(self.ticket, self.customer, self.run_id, self.cfg["agent_version"],
-                            agent=agent, task_type=task_type, step=step, parent=self.parent, retry=retry, run_tag=self.run_tag, route=self.route)
+                            agent=agent, task_type=task_type, step=step, parent=self.parent, retry=retry, run_tag=self.run_tag, trace_class=self.trace_class)
         model = model or self.cfg["models"][role]
         c = chat(self.spend, model, messages, md, max_tokens=max_tokens, json_mode=json_mode)
         self.rows.append({

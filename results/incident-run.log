@@ -1,0 +1,66 @@
+17:23:19Z  === PRELUDE (baseline, 3 Cobalt tickets) start ===
+17:23:40.248Z  CRT-001: 11 calls, 4 retries, QA 0.70, $0.1629 | running spend $0.1629 / $4.00
+17:23:57.450Z  CRT-002: 11 calls, 4 retries, QA 0.68, $0.1662 | running spend $0.3291 / $4.00
+17:24:04.225Z  CRT-003: 5 calls, 1 retries, QA 0.95, $0.0620 | running spend $0.3911 / $4.00
+
+run e09e8d, mode=baseline, results -> results/baseline-20261017-132320.jsonl
+customer          mode        tix calls   in_tok  out_tok retries  $/ticket  avg QA
+Cobalt Retail     baseline      3    27   223003     3457       9    0.1304   0.775
+estimated total spend: $0.3911
+revenium metering: 27 success, 0 error (of 27 calls), last_error=None
+17:24:04Z  === PRELUDE end ===
+17:24:04Z  waiting for the 15m boundary: 356s
+17:24:34Z  waiting for the 15m boundary: 326s
+17:25:04Z  waiting for the 15m boundary: 296s
+17:25:34Z  waiting for the 15m boundary: 266s
+17:26:05Z  waiting for the 15m boundary: 235s
+17:26:35Z  waiting for the 15m boundary: 205s
+17:27:05Z  waiting for the 15m boundary: 175s
+17:27:35Z  waiting for the 15m boundary: 145s
+17:28:05Z  waiting for the 15m boundary: 115s
+17:28:35Z  waiting for the 15m boundary: 85s
+17:29:05Z  waiting for the 15m boundary: 55s
+17:29:35Z  waiting for the 15m boundary: 25s
+17:29:36Z  waiting for the 15m boundary: 24s
+17:29:37Z  waiting for the 15m boundary: 23s
+17:29:38Z  waiting for the 15m boundary: 22s
+17:29:39Z  waiting for the 15m boundary: 21s
+17:29:40Z  waiting for the 15m boundary: 20s
+17:29:41Z  waiting for the 15m boundary: 19s
+17:29:42Z  waiting for the 15m boundary: 18s
+17:29:43Z  waiting for the 15m boundary: 17s
+17:29:44Z  waiting for the 15m boundary: 16s
+17:29:45Z  waiting for the 15m boundary: 15s
+17:29:46Z  waiting for the 15m boundary: 14s
+17:29:47Z  waiting for the 15m boundary: 13s
+17:29:48Z  waiting for the 15m boundary: 12s
+17:29:49Z  waiting for the 15m boundary: 11s
+17:29:50Z  waiting for the 15m boundary: 10s
+17:29:51Z  waiting for the 15m boundary: 9s
+17:29:52Z  waiting for the 15m boundary: 8s
+17:29:53Z  waiting for the 15m boundary: 7s
+17:29:54Z  waiting for the 15m boundary: 6s
+17:29:55Z  waiting for the 15m boundary: 5s
+17:29:56Z  waiting for the 15m boundary: 4s
+17:29:58Z  waiting for the 15m boundary: 2s
+17:30:19Z  === INCIDENT start (agent_version 1.1.0, tag incident-v1, 10 Cobalt tickets, guard $4) ===
+17:30:26.506Z  CRT-001: 3 calls, 0 retries, QA 1.00, $0.0427 | running spend $0.0427 / $4.00
+17:30:54.579Z  CRT-002: 15 calls, 6 retries, QA 0.78, $0.2090 | running spend $0.2517 / $4.00
+17:31:19.463Z  CRT-003: 15 calls, 6 retries, QA 0.82, $0.1673 | running spend $0.4190 / $4.00
+17:31:42.415Z  CRT-004: 15 calls, 6 retries, QA 0.70, $0.1813 | running spend $0.6003 / $4.00
+17:31:43.726Z  *** THRESHOLD CROSSED: daily budget > $1.00  (est $1.0003 > $1.0000) ***
+17:31:48.635Z  *** THRESHOLD CROSSED: responder-agent rolling 15m > $0.50  (est $0.5147 > $0.5000) ***
+17:31:57.381Z  CRT-005: 11 calls, 4 retries, QA 1.00, $0.1388 | running spend $0.7392 / $4.00
+17:32:01.699Z  *** THRESHOLD CROSSED: jump vs previous 15m, clock-aligned (> +100%)  (est $0.7837 > $0.7822) ***
+17:32:04.924Z  CRT-006: 5 calls, 1 retries, QA 0.97, $0.0694 | running spend $0.8085 / $4.00
+17:32:28.903Z  CRT-007: 15 calls, 6 retries, QA 0.65, $0.2015 | running spend $1.0100 / $4.00
+17:32:48.633Z  CRT-008: 15 calls, 6 retries, QA 0.90, $0.1772 | running spend $1.1873 / $4.00
+17:33:11.271Z  CRT-009: 15 calls, 6 retries, QA 0.53, $0.1729 | running spend $1.3602 / $4.00
+17:33:24.601Z  CRT-010: 9 calls, 3 retries, QA 0.95, $0.1000 | running spend $1.4602 / $4.00
+
+run f57a0d, mode=incident, results -> results/incident-20261017-133019.jsonl
+customer          mode        tix calls   in_tok  out_tok retries  $/ticket  avg QA
+Cobalt Retail     incident     10   118   875306    15278      44    0.1460   0.830
+estimated total spend: $1.4602
+revenium metering: 118 success, 0 error (of 118 calls), last_error=None
+17:33:25Z  === INCIDENT end ===
