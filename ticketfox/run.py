@@ -47,10 +47,10 @@ def alert_watcher():
             "jump vs previous 15m, rolling (> +100%)": (win(now - 900, now), 2 * win(now - 1800, now - 900), thr["jump_enabled"] and win(now - 1800, now - 900) > 0),
             "jump vs previous 15m, clock-aligned (> +100%)": (win(b - 1, now), 2 * win(b - 901, b - 1), thr["jump_enabled"] and win(b - 901, b - 1) > 0),
         }
-        for name, (val, thr, ok) in checks.items():
-            if ok and val > thr and name not in fired:
+        for name, (val, limit, ok) in checks.items():
+            if ok and val > limit and name not in fired:
                 fired.add(name)
-                print(f"{utc_now()}  *** THRESHOLD CROSSED: {name}  (est ${val:.4f} > ${thr:.4f}) ***", flush=True)
+                print(f"{utc_now()}  *** THRESHOLD CROSSED: {name}  (est ${val:.4f} > ${limit:.4f}) ***", flush=True)
     return on_call
 
 

@@ -1,0 +1,20 @@
+20:33:39Z  === INCIDENT start (agent_version 1.1.0, tag incident-v2, 10 Cobalt tickets, guard $4) ===
+20:33:46.032Z  CRT-001: 3 calls, 0 retries, QA 1.00, $0.0530 | running spend $0.0530 / $4.00
+20:34:07.653Z  CRT-002: 15 calls, 6 retries, QA 0.70, $0.2225 | running spend $0.2755 / $4.00
+20:34:24.449Z  *** THRESHOLD CROSSED: daily budget > $2.25  (est $2.2576 > $2.2500) ***
+20:34:26.082Z  *** THRESHOLD CROSSED: responder-agent rolling 15m > $0.20  (est $0.2001 > $0.2000) ***
+20:34:29.796Z  CRT-003: 15 calls, 6 retries, QA 0.70, $0.1758 | running spend $0.4513 / $4.00
+20:34:44.540Z  CRT-004: 11 calls, 4 retries, QA 1.00, $0.1351 | running spend $0.5864 / $4.00
+20:35:03.740Z  CRT-005: 15 calls, 6 retries, QA 0.69, $0.1764 | running spend $0.7628 / $4.00
+20:35:25.856Z  CRT-006: 13 calls, 5 retries, QA 0.95, $0.1678 | running spend $0.9306 / $4.00
+20:35:48.939Z  CRT-007: 15 calls, 6 retries, QA 0.75, $0.2016 | running spend $1.1322 / $4.00
+20:36:08.489Z  CRT-008: 15 calls, 6 retries, QA 0.72, $0.1862 | running spend $1.3185 / $4.00
+20:36:29.756Z  CRT-009: 15 calls, 6 retries, QA 0.78, $0.1698 | running spend $1.4882 / $4.00
+20:36:44.358Z  CRT-010: 11 calls, 4 retries, QA 1.00, $0.1205 | running spend $1.6087 / $4.00
+
+run d8b07e, mode=incident, results -> results/incident-20261017-163340.jsonl
+customer          mode        tix calls   in_tok  out_tok retries  $/ticket  avg QA
+Cobalt Retail     incident     10   128   949852    16284      49    0.1609   0.829
+estimated total spend: $1.6087
+revenium metering: 128 success, 0 error (of 128 calls), last_error=None
+20:36:45Z  === INCIDENT end ===
